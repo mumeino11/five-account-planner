@@ -135,6 +135,7 @@ function removeActivity(id){
   S.creditEvents=S.creditEvents.filter(t=>t.id!==id);
   S.insurance.movements=S.insurance.movements.filter(t=>t.id!==id);
   S.installments.cardPayments=S.installments.cardPayments.filter(t=>t.id!==id);
+  for(let [key,linked] of Object.entries(S.householdPaymentLinks||{}))if(linked===id||movement&&linked===movement.id){delete S.householdPaymentLinks[key];if(S.householdChecks)delete S.householdChecks[key]}
  });
 }
 function history(){return `<h2>History · All recorded activity</h2>${scopedActivity('History')}`}
