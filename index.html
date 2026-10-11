@@ -25,7 +25,10 @@
 .household-allocations th:nth-child(3),.household-allocations td:nth-child(3){width:9%!important}
 .household-allocations th:nth-child(4),.household-allocations td:nth-child(4){width:11%!important;white-space:nowrap!important}
 .household-allocations th:nth-child(5),.household-allocations td:nth-child(5){width:9%!important;text-align:center!important;padding-left:3px!important}
-.household-allocations td:nth-child(5){text-align:left!important;padding-left:24px!important;font-variant-numeric:tabular-nums;white-space:nowrap!important}
+.household-allocations td:nth-child(5){text-align:center!important;padding-left:3px!important;font-variant-numeric:tabular-nums;white-space:nowrap!important}
+.progress-parts{display:inline-grid;grid-template-columns:3ch 2ch 2ch;align-items:center;justify-items:center;white-space:nowrap;font-variant-numeric:tabular-nums}
+.progress-parts span:first-child{text-align:right;justify-self:end}
+.progress-parts span:last-child{text-align:left;justify-self:start}
 .household-allocations th:nth-child(6),.household-allocations td:nth-child(6){width:26%!important;text-align:center!important;white-space:nowrap!important}
 .household-allocations th:nth-child(7),.household-allocations td:nth-child(7){width:10%!important;text-align:center!important;white-space:normal!important;overflow-wrap:break-word}
 .household-allocations td:nth-child(6) button{padding:3px 5px!important;margin:0 1px!important;font-size:11px;min-height:0}
@@ -73,7 +76,8 @@ function table(head,rows){return `<div class="scroll"><table><thead><tr>${head.m
 function fundingProgress(saved,monthly,target=1){let unit=num(monthly);if(unit<=0)return '—';let fraction=Math.max(0,Math.min(target,Math.round(Math.max(0,num(saved))/unit*2)/2));return String(fraction)+' of '+String(target)}
 function expenseFundingProgress(e){return fundingProgress(expenseReserve(e.id),e.amount,1)}
 function insuranceFundingProgress(p){let target=p.frequency==='quarterly'?3:p.frequency==='annually'?12:1;if(p.progressBaseline!==undefined){let prior=new Set(p.progressMovementIds||[]),added=S.insurance.movements.filter(x=>x.policyId===p.id&&x.kind==='deposit'&&!prior.has(x.id)).reduce((sum,x)=>sum+num(x.amount),0);let unit=num(p.premium)/target;return String(Math.min(target,Math.max(0,num(p.progressBaseline)+(unit>0?Math.round(added/unit*2)/2:0))))+' of '+target}return fundingProgress(insBal(p),num(p.premium)/target,target)}
-function householdAllocationTable(head,rows){return table(head,rows).replace('<table>','<table class="household-allocations">')}
+function formatAllocationProgress(value){let m=String(value).match(/^([0-9]+(?:\.[0-9]+)?) of ([0-9]+)$/);return m?'<span class="progress-parts"><span>'+m[1]+'</span><span>of</span><span>'+m[2]+'</span></span>':value}
+function householdAllocationTable(head,rows){return table(head,rows.map(row=>row.map((cell,i)=>i===4?formatAllocationProgress(cell):cell))).replace('<table>','<table class="household-allocations">')}
 let showBudgetEditor=false;
 function householdSettleDate(e,m){if(!e.settleDay)return '';let [y,mo]=m.split('-').map(Number),last=new Date(y,mo,0).getDate();return m+'-'+String(Math.min(last,Math.max(1,num(e.settleDay)))).padStart(2,'0')}
 function householdNextMonth(e){if(!e.settleDay)return '';let current=today().slice(0,7),m=e.nextDueStart&&e.nextDueStart>current?e.nextDueStart:current;for(let i=0;i<120&&S.householdChecks?.[m+'|'+e.id];i++){let d=new Date(m+'-15T12:00:00');d.setMonth(d.getMonth()+1);m=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}return m}
