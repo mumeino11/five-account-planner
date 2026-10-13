@@ -294,8 +294,8 @@ let brotherHistoryOpen=false;
 function brotherToggleHistory(el){brotherHistoryOpen=el.open}
 function brotherHistoryMonthChange(v){brotherSummaryMonth=v;brotherHistoryOpen=true;render()}
 function brotherSwipesView(){
- let m=today().slice(0,7),a=S.brotherSwipes||[],months=new Set([m]);for(let x of a){let d=(x.due||'').slice(0,7);if(/^\\d{4}-\\d{2}$/.test(d))months.add(d)}
- for(let k of Object.keys(S.brotherSwipePayments||{})){let d=k.split('|').pop();if(/^\\d{4}-\\d{2}$/.test(d))months.add(d)}
+ let m=today().slice(0,7),a=S.brotherSwipes||[],months=new Set([m]);for(let x of a){let d=(x.due||'').slice(0,7);if(/^\d{4}-\d{2}$/.test(d))months.add(d)}
+ for(let k of Object.keys(S.brotherSwipePayments||{})){let d=k.split('|').pop();if(/^\d{4}-\d{2}$/.test(d))months.add(d)}
  let sorted=[...months].sort(),first=sorted[0]||m,last=sorted[sorted.length-1]||m;for(let n=first,i=0;n<=last&&i<120;n=shiftMonth(n,1),i++)months.add(n);
  let current=brotherEntriesForMonth(m),total=current.reduce((n,x)=>n+num(x.amount),0),paid=current.filter(x=>brotherPaid(x,m)).reduce((n,x)=>n+num(x.amount),0);
  let currentSummary=cardsHtml([['Total due for '+brotherMonthLabel(m),P(total)],['Paid',P(paid)],['Unpaid',P(total-paid)]]);
