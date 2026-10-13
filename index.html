@@ -280,7 +280,7 @@ function brotherSwipesView(){
  let a=S.brotherSwipes||[],m=brotherSelectedMonth;
  let entries=a.filter(x=>{let p=brotherPeriod(x,m);return p?p.delta>=0&&p.current>=1&&p.current<=p.total:(x.due||'').slice(0,7)===m});
  let allCycles=[];
- for(const x of a){let base=(x.due||'').slice(0,7);if(!/^\\d{4}-\\d{2}$/.test(base))continue;let p=brotherPeriod(x,base);if(p){for(let n=0;n<=Math.max(0,p.total-p.current)&&n<120;n++){let d=new Date(Number(base.slice(0,4)),Number(base.slice(5,7))-1+n,1),mm=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');let cycle=brotherPeriod(x,mm);if(cycle&&cycle.current>=1&&cycle.current<=cycle.total)allCycles.push({x,mm})}}else allCycles.push({x,mm:base})}
+ for(const x of a){let base=(x.due||'').slice(0,7);if(!/^\d{4}-\d{2}$/.test(base))continue;let p=brotherPeriod(x,base);if(p){for(let n=0;n<=Math.max(0,p.total-p.current)&&n<120;n++){let d=new Date(Number(base.slice(0,4)),Number(base.slice(5,7))-1+n,1),mm=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');let cycle=brotherPeriod(x,mm);if(cycle&&cycle.current>=1&&cycle.current<=cycle.total)allCycles.push({x,mm})}}else allCycles.push({x,mm:base})}
  allCycles.sort((a,b)=>brotherPeriodDate(a.x,a.mm).localeCompare(brotherPeriodDate(b.x,b.mm))||brotherBankName(a.x).localeCompare(brotherBankName(b.x)));
  entries.sort((x,y)=>brotherPeriodDate(x,brotherKind(x)==='installment'?m:x.due.slice(0,7)).localeCompare(brotherPeriodDate(y,brotherKind(y)==='installment'?m:y.due.slice(0,7)))||brotherBankName(x).localeCompare(brotherBankName(y))||brotherRemark(x).localeCompare(brotherRemark(y)));
  let total=entries.reduce((n,x)=>n+num(x.amount),0),paidTotal=entries.filter(x=>brotherPaid(x,brotherKind(x)==='installment'?m:x.due.slice(0,7))).reduce((n,x)=>n+num(x.amount),0);
