@@ -263,7 +263,7 @@ function scopedActivityRows(scope){
  if(scope==='Smoothing')return !!t&&(t.type==='transfer'&&(t.from==='laPool'||t.to==='laPool')||t.type==='pool'||t.type==='smoothing');
  return false};
  rows=rows.filter(match);
- let earmarks=(S.earmarked?.events||[]).filter(e=>!e.bankTransactionId&&!e.cardPaymentId&&(scope==='Overview'||scope==='Accounts'||scope==='Bills & Payments'&&!!e.expenseId||scope==='Installments'&&!!e.installmentCard)).map(e=>({id:e.id,date:e.date,createdAt:e.createdAt,type:e.type==='add'?'Earmark allocated':e.type==='payment'?'Earmark used':'Earmark adjusted',description:e.note||e.expenseId||e.installmentCard||e.kind||'Earmark',amount:e.amount,earmark:true}));
+ let earmarks=(S.earmarked?.events||[]).filter(e=>scope==='History'||scope==='Overview'||scope==='Accounts'||scope==='Bills & Payments'&&!!e.expenseId||scope==='Installments'&&!!e.installmentCard).map(e=>{let expense=S.expenses.find(x=>x.id===e.expenseId),label=expense?.name||(e.installmentCard?(cards[e.installmentCard]||e.installmentCard):e.expenseId||e.kind||'Earmark'),linked=e.bankTransactionId||e.cardPaymentId,action=e.type==='add'?'Earmark allocated':e.type==='payment'?'Earmark used':e.type==='release'?'Earmark released':'Earmark adjusted';return {id:e.id,date:e.date,createdAt:e.createdAt,type:action,description:label+(e.note?' · '+e.note:'')+(linked?' · Linked to transaction':'') ,amount:e.amount,earmark:true}});
  rows.push(...earmarks);
  return rows.sort((a,b)=>activitySortKey(b).localeCompare(activitySortKey(a)));
 }
